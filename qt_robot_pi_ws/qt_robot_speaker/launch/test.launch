@@ -1,0 +1,12 @@
+<!-- This is an example launch file for how a ROS application could use a qt_robot_speaker -->
+<launch>
+   
+	<arg name="use_speaker" default="true"/>
+  	<group if="$(arg use_speaker)">
+		<node pkg="qt_robot_speaker" type="test_speaker.py" name="test_speaker" output="screen"/>
+		
+    		<node pkg="qt_robot_speaker" type="speaker_output.py" name="speaker_output" output="screen"/>
+  	</group>
+
+
+</launch>

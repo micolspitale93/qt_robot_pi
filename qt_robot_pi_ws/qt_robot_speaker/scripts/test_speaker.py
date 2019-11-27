@@ -39,7 +39,7 @@ class Test():
 	
 	
 	def handle_tts_realtime(self):
-		outdir = "/home/micolspitale/QTRobot/qt_robot_pi/src/qt_robot_pi/qt_robot_speaker/scripts"
+		outdir = "/home/qtrobot/test_ws/qt_robot_pi/src/qt_robot_pi/qt_robot_pi_ws/qt_robot_speaker/scripts"
 		phraseID = "1"
 		#data, samplerate = sf.read(outdir + '/'+phraseID+'.ogg')
 		#sf.write(outdir + '/'+phraseID+'.wav', data, samplerate)

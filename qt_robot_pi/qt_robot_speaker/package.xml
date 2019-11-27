@@ -1,0 +1,18 @@
+<package>
+  <name>qt_robot_speaker</name>
+  <version>0.1.2</version>
+  <description >
+
+     Interface to use QTRobot Speaker
+
+  </description>
+  <author>Elaine Short</author>
+  <maintainer email="micol.spitale@gmail.com">Micol Spitale</maintainer>
+  <license>GPL</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+</package>
+
+

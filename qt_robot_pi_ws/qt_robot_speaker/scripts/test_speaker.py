@@ -43,6 +43,7 @@ class Test():
 		phraseID = "1"
 		#data, samplerate = sf.read(outdir + '/'+phraseID+'.ogg')
 		#sf.write(outdir + '/'+phraseID+'.wav', data, samplerate)
+		samplerate = 22050
 		file_handle =outdir + '/'+phraseID+'.wav'
 		data = np.fromfile(file_handle, np.uint8)[WAV_HEADER_LENGTH:] #Loading wav file
 		data_array = data.astype(np.uint8).tostring()

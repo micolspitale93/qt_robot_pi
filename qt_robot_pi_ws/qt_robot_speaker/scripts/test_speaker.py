@@ -12,7 +12,7 @@ import numpy as np
 from std_msgs.msg import String
 from audio_common_msgs.msg import AudioData
 from qt_robot_speaker.srv import PlayAudio, PlayAudioRequest
-import soundfile as sf
+#import soundfile as sf
 
 
 WAV_HEADER_LENGTH = 24
@@ -41,17 +41,14 @@ class Test():
 	def handle_tts_realtime(self):
 		outdir = "/home/micolspitale/QTRobot/qt_robot_pi/src/qt_robot_pi/qt_robot_speaker/scripts"
 		phraseID = "1"
-		data, samplerate = sf.read(outdir + '/'+phraseID+'.ogg')
-		sf.write(outdir + '/'+phraseID+'.wav', data, samplerate)
+		#data, samplerate = sf.read(outdir + '/'+phraseID+'.ogg')
+		#sf.write(outdir + '/'+phraseID+'.wav', data, samplerate)
 		file_handle =outdir + '/'+phraseID+'.wav'
 		data = np.fromfile(file_handle, np.uint8)[WAV_HEADER_LENGTH:] #Loading wav file
 		data_array = data.astype(np.uint8).tostring()
 		audio_frame = int(np.int64(samplerate)) 
 		response = self.speaker_output_client(audio_frame, data_array)
 		print(response.speaker_state)
-
-
-	
 		
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import rospy
 import sys
 import pyaudio
@@ -39,7 +40,7 @@ class Test():
 	
 	
 	def handle_tts_realtime(self):
-		outdir = "/home/qtrobot/test_ws/src/qt_robot_pi/qt_robot_pi_ws/qt_robot_speaker/scripts"
+		outdir = os.path.dirname(os.path.realpath(__file__))
 		phraseID = "1"
 		#data, samplerate = sf.read(outdir + '/'+phraseID+'.ogg')
 		#sf.write(outdir + '/'+phraseID+'.wav', data, samplerate)

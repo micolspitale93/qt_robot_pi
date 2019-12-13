@@ -1,2 +1,2 @@
 int64 audio_frame
-audio_common_msgs/AudioData audio_data
+uint8[] data

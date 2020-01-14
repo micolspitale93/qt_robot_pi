@@ -3,6 +3,7 @@
 import rospy
 from std_msgs.msg import String
 from qt_robot_speaker.srv import PlayAudio, PlayAudioResponse
+from qt_robot_speaker.msg import PlayRequest
 import pyaudio
 import numpy as np
 import sys
@@ -15,7 +16,8 @@ class SpeakerOutput:
         self.pi_topic = pi
 	self.nuc_topic = nuc
         rospy.init_node("speaker_node")
-	speaker_service = rospy.Service('speaker_output', PlayAudio, self.handle_play)
+	#speaker_service = rospy.Service('speaker_output', PlayAudio, self.handle_play)
+	self.speak_sub = rospy.Subscriber(self.pi_topic+"/speaker_state/play", PlayRequest, self.handle_play)
 	self.speak_pub = rospy.Publisher(self.pi_topic+"/speaker_state", String, queue_size=5)        
 	self.output_device_index = None
         self.get_output_device_index()

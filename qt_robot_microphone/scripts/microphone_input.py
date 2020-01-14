@@ -3,6 +3,7 @@
 import rospy
 from audio_common_msgs.msg import AudioData
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 import pyaudio
 import audioop
 import numpy as np
@@ -35,13 +36,13 @@ class VoiceInput:
 	self.state = "Start"
         self.audio_publisher = rospy.Publisher(self.pi_topic+"/microphone_input", AudioData, queue_size=5)
 	self.state_publisher = rospy.Publisher(self.pi_topic+"/state", String, queue_size=10)
-	rospy.Subscriber(self.nuc_topic+"/speaker_state", String, self.handle_speaker_state)
+	rospy.Subscriber(self.nuc_topic+"/speaker_state", Bool, self.handle_speaker_state)
 
 
     def handle_speaker_state(self,request):
 	self.speaker_state = request.data
-	print("The speaker state is:"+self.speaker_state)
-	if self.speaker_state == "Finish speaking":
+	print("The speaker state is:"+str(self.speaker_state))
+	if self.speaker_state:
 		self.state = "Idle"
 		self.started = False
 		self.stream.start_stream()
@@ -145,7 +146,8 @@ class VoiceInput:
         #rospy.loginfo("Attempting to find device named 'record'")
         for i in range(self.p.get_device_count()):
             device = self.p.get_device_info_by_index(i)
-            if device['name'] == 'record':
+	    print(device['name'])
+            if device['name'] =='ReSpeaker 4 Mic Array (UAC1.0): USB Audio (hw:1,0)':
                 rospy.loginfo("Found device 'record' at index %d" % i)
                 self.input_device_index = i
                 return

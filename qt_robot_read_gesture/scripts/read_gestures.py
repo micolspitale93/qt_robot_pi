@@ -51,8 +51,7 @@ class ReadGestures:
                 elif child.tag == 'name':
                     self.gestures_name.append(child.text)    
 	for index, el in enumerate(self.gestures_name):
-		gesture_list.append("{'name':"+el+", 'duration':"+self.gestures_duration[index]+"}")
-	print(gesture_list)
+		gesture_list.append({'name': str(el), 'duration': self.gestures_duration[index] })
 	self.qt_gestures_pub.publish(str(gesture_list))
 
 

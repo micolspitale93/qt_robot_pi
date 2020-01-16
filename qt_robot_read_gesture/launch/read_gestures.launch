@@ -1,0 +1,10 @@
+<!-- This is an example launch file for how a ROS application could use a qt_robot_read_gesture -->
+<launch>
+   
+	<arg name="use_gestures" default="true"/>
+  	<group if="$(arg use_gestures)">
+    		<node pkg="qt_robot_read_gesture" type="read_gestures.py" name="read_gestures" output="screen"/>
+  	</group>
+
+
+</launch>

@@ -18,13 +18,8 @@ class SpeakerOutput:
 	self.nuc_topic = nuc
         rospy.init_node("speaker_node")
 	#speaker_service = rospy.Service('speaker_output', PlayAudio, self.handle_play)
-<<<<<<< HEAD:qt_robot_pi_ws/qt_robot_speaker/scripts/speaker_output.py
-	self.speak_sub = rospy.Subscriber(self.pi_topic+"/speaker_state/play", PlayRequest, self.handle_play)
-	self.speak_pub = rospy.Publisher(self.pi_topic+"/speaker_state", String, queue_size=5)        
-=======
 	self.speak_sub = rospy.Subscriber(self.pi_topic+"/speaker_output/play", PlayRequest, self.handle_play)
 	self.speak_pub = rospy.Publisher(self.pi_topic+"/speaker_state", Bool, queue_size=5)        
->>>>>>> 76378e6e2a1259ded4f56380c0d6b253f71263ba:qt_robot_speaker/scripts/speaker_output.py
 	self.output_device_index = None
         self.get_output_device_index()
 	rospy.spin()

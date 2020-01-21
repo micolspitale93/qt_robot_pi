@@ -11,7 +11,7 @@ wait_for_ros_node "/rosout" 60
 wait_for_tcpip_port 1883 60
 
 roslaunch qt_robot_speaker speaker.launch
-roslaunch qt_robot_microphone microphone.launch
-
+#roslaunch qt_robot_microphone microphone.launch
+roslaunch qt_robot_read_gesture read_gestures.launch
 } &>> ${LOG_FILE}
 

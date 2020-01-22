@@ -132,6 +132,7 @@ class VoiceInput:
         sum_of_loudest_sounds = sum(values[:int(tss * loudest_sound_cohort_size)])
         total_samples_in_cohort = int(tss * loudest_sound_cohort_size)
         average_of_loudest_sounds = sum_of_loudest_sounds / total_samples_in_cohort
+	average_of_loudest_sounds = 2
         rospy.loginfo("Average audio intensity is %d" % average_of_loudest_sounds)
         self.silence_threshold = average_of_loudest_sounds * silence_threshold_multiplier
         rospy.loginfo("Silence threshold set to %d " % self.silence_threshold)

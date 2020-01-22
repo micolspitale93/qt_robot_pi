@@ -16,7 +16,7 @@ class ReadGestures:
 	self.gestures_name = []
         rospy.init_node("read_gestures_node")
         self.qt_gestures_pub = rospy.Publisher('/qt_robot/gestures/list', String, queue_size=10)
-	self.read_gestures()
+	rospy.Timer(rospy.Duration(0.5), self.read_gestures)
 	rospy.spin()
 
     def get_files(self, dirName):
@@ -36,7 +36,7 @@ class ReadGestures:
     	return allFiles  
 
 
-    def read_gestures(self):
+    def read_gestures(self, timer):
         path = '/home/qtrobot/robot/data/gestures'
 	all_files = self.get_files(path)
 	gesture_list = []

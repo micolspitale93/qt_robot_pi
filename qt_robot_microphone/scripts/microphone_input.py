@@ -16,7 +16,7 @@ class VoiceInput:
     p = pyaudio.PyAudio()
     audio_format = pyaudio.paInt16
     audio_format_width = 2
-    chunk_size = 1024
+    chunk_size = 1024*2
     total_channels = 1
     audio_rate = 16000
     silence_limit_seconds = 1
@@ -33,7 +33,7 @@ class VoiceInput:
         self.stream = None
         self.input_device_index = None
         self.output_device_index = None
-	self.state = "Start"
+	self.state = "Speaking"
         self.audio_publisher = rospy.Publisher(self.pi_topic+"/microphone_input", AudioData, queue_size=5)
 	self.state_publisher = rospy.Publisher(self.pi_topic+"/state", String, queue_size=10)
 	rospy.Subscriber(self.nuc_topic+"/speaker_state", Bool, self.handle_speaker_state)

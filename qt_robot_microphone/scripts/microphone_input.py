@@ -16,12 +16,12 @@ class VoiceInput:
     p = pyaudio.PyAudio()
     audio_format = pyaudio.paInt16
     audio_format_width = 2
-    chunk_size = 1024*2
+    chunk_size = 1024
     total_channels = 1
     audio_rate = 16000
     silence_limit_seconds = 1
     previous_audio_seconds = 1
-    total_silence_samples = 100
+    total_silence_samples = 10
     silence_threshold = 1000
     
     def __init__(self, node_name, pi, nuc):
@@ -43,6 +43,7 @@ class VoiceInput:
 	self.speaker_state = request.data
 	print("The speaker state is:"+str(self.speaker_state))
 	if self.speaker_state:
+		#self.open_stream()
 		self.state = "Idle"
 		self.started = False
 		self.stream.start_stream()
@@ -69,9 +70,7 @@ class VoiceInput:
 
     def listen(self):
         self.open_stream()
-
         rospy.loginfo("%s listening" % self.node_name)
-
         current_audio = ''
         chunks_per_second = int(self.audio_rate / self.chunk_size)
         sliding_window = deque(maxlen=self.silence_limit_seconds * chunks_per_second)
@@ -80,7 +79,7 @@ class VoiceInput:
 
         while not rospy.is_shutdown():
 	    if not self.state == "Speaking":
-                    latest_audio_data = self.stream.read(self.chunk_size)
+                    latest_audio_data = self.stream.read(self.chunk_size, exception_on_overflow = False)
             	    sliding_window.append(math.sqrt(abs(audioop.avg(latest_audio_data, self.audio_format_width))))
 		    if any([x > self.silence_threshold for x in sliding_window]):
 		        if not self.started :
@@ -124,19 +123,19 @@ class VoiceInput:
         silence_threshold_multiplier = 1.6  # Sounds must be at least 1.6x as loud as the loudest silence
 
         rospy.loginfo("Getting intensity values from mic.")
-        self.open_stream()
-        tss = self.total_silence_samples
-        values = [math.sqrt(abs(audioop.avg(self.stream.read(self.chunk_size), self.audio_format_width)))
-                  for _ in range(tss)]
-        values = sorted(values, reverse=True)
-        sum_of_loudest_sounds = sum(values[:int(tss * loudest_sound_cohort_size)])
-        total_samples_in_cohort = int(tss * loudest_sound_cohort_size)
-        average_of_loudest_sounds = sum_of_loudest_sounds / total_samples_in_cohort
-	average_of_loudest_sounds = 2
+        #self.open_stream()
+        #tss = self.total_silence_samples
+        #values = [math.sqrt(abs(audioop.avg(self.stream.read(self.chunk_size), self.audio_format_width)))
+        #          for _ in range(tss)]
+        #values = sorted(values, reverse=True)
+        #sum_of_loudest_sounds = sum(values[:int(tss * loudest_sound_cohort_size)])
+        #total_samples_in_cohort = int(tss * loudest_sound_cohort_size)
+        #average_of_loudest_sounds = sum_of_loudest_sounds / total_samples_in_cohort
+	average_of_loudest_sounds = 1
         rospy.loginfo("Average audio intensity is %d" % average_of_loudest_sounds)
         self.silence_threshold = average_of_loudest_sounds * silence_threshold_multiplier
         rospy.loginfo("Silence threshold set to %d " % self.silence_threshold)
-        self.close_stream()
+        #self.close_stream()
     
  
     def get_record_device_index(self):

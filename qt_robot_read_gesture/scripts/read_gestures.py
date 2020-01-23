@@ -14,9 +14,11 @@ class ReadGestures:
 	self.nuc_topic = nuc
 	self.gestures_duration = []
 	self.gestures_name = []
+	self.gesture_list = []
+	self.read_gesture_done = False
         rospy.init_node("read_gestures_node")
         self.qt_gestures_pub = rospy.Publisher('/qt_robot/gestures/list', String, queue_size=10)
-	rospy.Timer(rospy.Duration(0.5), self.read_gestures)
+	rospy.Timer(rospy.Duration(2),self.read_gestures)
 	rospy.spin()
 
     def get_files(self, dirName):
@@ -37,22 +39,23 @@ class ReadGestures:
 
 
     def read_gestures(self, timer):
-        path = '/home/qtrobot/robot/data/gestures'
-	all_files = self.get_files(path)
-	gesture_list = []
-        for filename in all_files:
-            if not filename.endswith('.xml'): continue
-            fullname = filename
-            tree = ET.parse(fullname)
-            root = tree.getroot()
-            for child in root:
-                if child.tag == 'duration':
-                    self.gestures_duration.append(child.text)
-                elif child.tag == 'name':
-                    self.gestures_name.append(child.text)    
-	for index, el in enumerate(self.gestures_name):
-		gesture_list.append({'name': str(el), 'duration': self.gestures_duration[index] })
-	self.qt_gestures_pub.publish(str(gesture_list))
+	if not self.read_gesture_done:
+        	path = '/home/qtrobot/robot/data/gestures'
+		all_files = self.get_files(path)
+        	for filename in all_files:
+            		if not filename.endswith('.xml'): continue
+           		fullname = filename
+            		tree = ET.parse(fullname)
+            		root = tree.getroot()
+            		for child in root:
+                		if child.tag == 'duration':
+                    			self.gestures_duration.append(child.text)
+                		elif child.tag == 'name':
+                    			self.gestures_name.append(child.text)    
+		for index, el in enumerate(self.gestures_name):
+			self.gesture_list.append({'name': str(el), 'duration': self.gestures_duration[index] })
+		self.read_gesture_done = True
+	self.qt_gestures_pub.publish(str(self.gesture_list))
 
 
 if __name__ == '__main__':

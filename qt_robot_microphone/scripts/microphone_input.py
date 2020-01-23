@@ -16,12 +16,12 @@ class VoiceInput:
     p = pyaudio.PyAudio()
     audio_format = pyaudio.paInt16
     audio_format_width = 2
-    chunk_size = 1024
+    chunk_size = 1024*2
     total_channels = 1
     audio_rate = 16000
     silence_limit_seconds = 1
-    previous_audio_seconds = 1
-    total_silence_samples = 10
+    previous_audio_seconds = 2
+    total_silence_samples = 100
     silence_threshold = 1000
     
     def __init__(self, node_name, pi, nuc):
@@ -43,7 +43,6 @@ class VoiceInput:
 	self.speaker_state = request.data
 	print("The speaker state is:"+str(self.speaker_state))
 	if self.speaker_state:
-		#self.open_stream()
 		self.state = "Idle"
 		self.started = False
 		self.stream.start_stream()
@@ -51,7 +50,6 @@ class VoiceInput:
 		self.state_publisher.publish(state)
 		
 
-    
     def open_stream(self):
         self.close_stream()
         rospy.loginfo("Opening audio input stream")
@@ -81,6 +79,7 @@ class VoiceInput:
 	    if not self.state == "Speaking":
                     latest_audio_data = self.stream.read(self.chunk_size, exception_on_overflow = False)
             	    sliding_window.append(math.sqrt(abs(audioop.avg(latest_audio_data, self.audio_format_width))))
+		    rospy.loginfo("Lenght of sliding window:" + str(len(sliding_window))) 
 		    if any([x > self.silence_threshold for x in sliding_window]):
 		        if not self.started :
 		            rospy.loginfo("Sound detected... Recording")
@@ -88,9 +87,7 @@ class VoiceInput:
 			    state = self.state
 			    self.state_publisher.publish(state)
 		            self.started = True
-			    # Here just command the QTrobot with specific commands for the Recording Status
-			    # How much it lasts?
-
+			    # Here just command the QTrobot with specific commands for the Recording Starts
 		        current_audio += latest_audio_data
 		    elif self.started:
 		        rospy.loginfo("Finished")

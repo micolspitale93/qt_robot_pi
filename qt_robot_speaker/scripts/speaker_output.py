@@ -13,13 +13,11 @@ import ast
 
 class SpeakerOutput:
 
-    def __init__(self, pi, nuc):
-        self.pi_topic = pi
-	self.nuc_topic = nuc
+    def __init__(self):
         rospy.init_node("speaker_node")
 	#speaker_service = rospy.Service('speaker_output', PlayAudio, self.handle_play)
-	self.speak_sub = rospy.Subscriber(self.pi_topic+"/speaker_output/play", PlayRequest, self.handle_play)
-	self.speak_pub = rospy.Publisher(self.pi_topic+"/speaker_state", Bool, queue_size=5)        
+	self.speak_sub = rospy.Subscriber("/cordial/speaker/playing", PlayRequest, self.handle_play)
+	self.speak_pub = rospy.Publisher("/cordial/speaker/done", Bool, queue_size=5)        
 	self.output_device_index = None
         self.get_output_device_index()
 	rospy.spin()
@@ -44,7 +42,6 @@ class SpeakerOutput:
 	time.sleep(1)
 	self.stream.stop_stream()
 	self.stream.close()
-	#speaker_state = "Finish speaking"
 	speaker_state = True
 	self.speak_pub.publish(speaker_state)
 	
@@ -65,7 +62,5 @@ class SpeakerOutput:
 
 
 if __name__ == '__main__':
-	pi = "qt_robot"
-	nuc = "qtpc"
-    	SpeakerOutput(pi, nuc)
+    	SpeakerOutput()
 

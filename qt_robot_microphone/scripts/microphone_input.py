@@ -24,30 +24,26 @@ class VoiceInput:
     total_silence_samples = 100
     silence_threshold = 1000
     
-    def __init__(self, node_name, pi, nuc):
-	self.pi_topic = pi
-	self.nuc_topic = nuc
+    def __init__(self, node_name):
         rospy.init_node(node_name)
         rospy.loginfo("Initializing  %s" % node_name)
         self.node_name = node_name
         self.stream = None
         self.input_device_index = None
         self.output_device_index = None
-	self.state = "Speaking"
-        self.audio_publisher = rospy.Publisher(self.pi_topic+"/microphone_input", AudioData, queue_size=5)
-	self.state_publisher = rospy.Publisher(self.pi_topic+"/state", String, queue_size=10)
-	rospy.Subscriber(self.nuc_topic+"/speaker_state", Bool, self.handle_speaker_state)
+	self.state = "Start"
+        self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=5)
+	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening)
 
-
-    def handle_speaker_state(self,request):
-	self.speaker_state = request.data
-	print("The speaker state is:"+str(self.speaker_state))
-	if self.speaker_state:
+    def handle_listening(self,request):
+	self.listening = request.data
+	print("The listening is:"+str(self.speaker_state))
+	if self.listening:
 		self.state = "Idle"
 		self.started = False
 		self.stream.start_stream()
 		state = self.state
-		self.state_publisher.publish(state)
+		#self.state_publisher.publish(state)
 		
 
     def open_stream(self):
@@ -85,7 +81,7 @@ class VoiceInput:
 		            rospy.loginfo("Sound detected... Recording")
 			    self.state = "Listening"
 			    state = self.state
-			    self.state_publisher.publish(state)
+			    #self.state_publisher.publish(state)
 		            self.started = True
 			    # Here just command the QTrobot with specific commands for the Recording Starts
 		        current_audio += latest_audio_data
@@ -93,7 +89,7 @@ class VoiceInput:
 		        rospy.loginfo("Finished")
 			self.state = "Speaking"
 			state = self.state
-			self.state_publisher.publish(state)
+			#self.state_publisher.publish(state)
 		        all_audio_data = ''.join(prev_audio) + current_audio
 		        self.stream.stop_stream()
 		        audio_bitstream = np.fromstring(all_audio_data, np.uint8)
@@ -153,7 +149,7 @@ class VoiceInput:
 
 def main():
     try:
-        voice_input = VoiceInput(node_name="microphone_node", pi = "qt_robot", nuc = "qtpc")
+        voice_input = VoiceInput(node_name="microphone_node")
         voice_input.audio_int()
         voice_input.listen()
     except rospy.ROSInterruptException:

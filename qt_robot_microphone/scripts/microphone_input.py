@@ -33,6 +33,7 @@ class VoiceInput:
         self.output_device_index = None
 	self.state = "Speaking"
         self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=5)
+	self.listening_done_publisher = rospy.Publisher("/cordial/listening/done", Bool, queue_size = 1)
 	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening)
 	rospy.Subscriber("/cordial/recording/audio", Bool, self.handle_recording)
 
@@ -86,7 +87,6 @@ class VoiceInput:
 		            rospy.loginfo("Sound detected... Recording")
 			    self.state = "Listening"
 			    state = self.state
-			    #self.state_publisher.publish(state)
 		            self.started = True
 			    # Here just command the QTrobot with specific commands for the Recording Starts
 		        current_audio += latest_audio_data
@@ -94,7 +94,6 @@ class VoiceInput:
 		        rospy.loginfo("Finished")
 			self.state = "Speaking"
 			state = self.state
-			#self.state_publisher.publish(state)
 		        all_audio_data = ''.join(prev_audio) + current_audio
 		        self.stream.stop_stream()
 		        audio_bitstream = np.fromstring(all_audio_data, np.uint8)
@@ -103,6 +102,7 @@ class VoiceInput:
 		        sliding_window.clear()
 		        prev_audio.clear()
 		        current_audio = ''
+			self.listening_done_publisher.publish(True)
 			if self.state == "Speaking":
 				self.started = True
 		    else:

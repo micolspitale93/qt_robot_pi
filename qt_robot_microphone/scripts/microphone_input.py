@@ -43,7 +43,6 @@ class VoiceInput:
 
     def handle_listening(self,request):
 	self.listening = request.data
-	print("The listening is:"+str(self.speaker_state))
 	if self.listening:
 		self.state = "Idle"
 		self.started = False

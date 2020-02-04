@@ -14,7 +14,7 @@ wait_for_tcpip_port 1883 60
 
 
 
-roslaunch qt_robot_speaker speaker.launch
+roslaunch qt_robot_microphone microphone.launch
 } &>> ${LOG_FILE}
 
 

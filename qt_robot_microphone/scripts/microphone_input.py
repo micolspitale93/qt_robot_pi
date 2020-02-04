@@ -31,7 +31,7 @@ class VoiceInput:
         self.stream = None
         self.input_device_index = None
         self.output_device_index = None
-	self.state = "Start"
+	self.state = "Speaking"
         self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=5)
 	self.listening_done_publisher = rospy.Publisher("/cordial/listening/done", Bool, queue_size = 1)
 	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening)

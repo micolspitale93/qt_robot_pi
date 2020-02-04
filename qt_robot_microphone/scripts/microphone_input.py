@@ -31,7 +31,7 @@ class VoiceInput:
         self.stream = None
         self.input_device_index = None
         self.output_device_index = None
-	self.state = "Speaking"
+	self.state = "Start"
         self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=5)
 	self.listening_done_publisher = rospy.Publisher("/cordial/listening/done", Bool, queue_size = 1)
 	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening)
@@ -48,8 +48,6 @@ class VoiceInput:
 		self.started = False
 		self.stream.start_stream()
 		state = self.state
-		#self.state_publisher.publish(state)
-		
 
     def open_stream(self):
         self.close_stream()
@@ -77,9 +75,10 @@ class VoiceInput:
         self.started = False
 
         while not rospy.is_shutdown():
+	    if not self.stream.is_stopped():
+	    	latest_audio_data = self.stream.read(self.chunk_size, exception_on_overflow = False)
 	    if not self.state == "Speaking":
-                    latest_audio_data = self.stream.read(self.chunk_size, exception_on_overflow = False)
-            	    sliding_window.append(math.sqrt(abs(audioop.avg(latest_audio_data, self.audio_format_width))))
+	       	    sliding_window.append(math.sqrt(abs(audioop.avg(latest_audio_data, self.audio_format_width))))
 		    rospy.loginfo("Lenght of sliding window:" + str(len(sliding_window))) 
 		    if any([x > self.silence_threshold for x in sliding_window]):
 		        if not self.started :
@@ -128,11 +127,12 @@ class VoiceInput:
         #sum_of_loudest_sounds = sum(values[:int(tss * loudest_sound_cohort_size)])
         #total_samples_in_cohort = int(tss * loudest_sound_cohort_size)
         #average_of_loudest_sounds = sum_of_loudest_sounds / total_samples_in_cohort
-	average_of_loudest_sounds = 1
+	average_of_loudest_sounds = 2
         rospy.loginfo("Average audio intensity is %d" % average_of_loudest_sounds)
         self.silence_threshold = average_of_loudest_sounds * silence_threshold_multiplier
         rospy.loginfo("Silence threshold set to %d " % self.silence_threshold)
         #self.close_stream()
+
     
  
     def get_record_device_index(self):
@@ -154,8 +154,8 @@ class VoiceInput:
 def main():
     try:
         voice_input = VoiceInput(node_name="microphone_node")
-        voice_input.audio_int()
-        voice_input.listen()
+	voice_input.audio_int()
+	voice_input.listen()
     except rospy.ROSInterruptException:
         pass
 

@@ -16,7 +16,7 @@ class VoiceInput:
     p = pyaudio.PyAudio()
     audio_format = pyaudio.paInt16
     audio_format_width = 2
-    chunk_size = 1024*2
+    chunk_size = 1024
     total_channels = 1
     audio_rate = 16000
     silence_limit_seconds = 1
@@ -32,10 +32,10 @@ class VoiceInput:
         self.input_device_index = None
         self.output_device_index = None
 	self.state = "Speaking"
-        self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=5)
+        self.audio_publisher = rospy.Publisher("/cordial/microphone/audio", AudioData, queue_size=1)
 	self.listening_done_publisher = rospy.Publisher("/cordial/listening/done", Bool, queue_size = 1)
-	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening)
-	rospy.Subscriber("/cordial/recording/audio", Bool, self.handle_recording)
+	rospy.Subscriber("/cordial/listening", Bool, self.handle_listening,queue_size=1)
+	rospy.Subscriber("/cordial/recording/audio", Bool, self.handle_recording,queue_size=1)
 
     def handle_recording(self, req):
 	if req.data:

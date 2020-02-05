@@ -16,18 +16,18 @@ class SpeakerOutput:
     def __init__(self):
         rospy.init_node("speaker_node")
 	#speaker_service = rospy.Service('speaker_output', PlayAudio, self.handle_play)
-	self.speak_sub = rospy.Subscriber("/cordial/speaker/playing", PlayRequest, self.handle_play)
-	self.speak_pub = rospy.Publisher("/cordial/speaker/done", Bool, queue_size=5)        
+	self.speak_sub = rospy.Subscriber("/cordial/speaker/playing", PlayRequest, self.handle_play, queue_size=1)
+	self.speak_pub = rospy.Publisher("/cordial/speaker/done", Bool, queue_size=1)        
 	self.output_device_index = None
         self.get_output_device_index()
 	rospy.spin()
       
 
     def handle_play(self, req):
-	print('Received request')
+	print('Pi Received request')
         data = req.data
 	audio_rate = req.audio_frame
-	print(audio_rate)
+	#print(audio_rate)
         p = pyaudio.PyAudio()
         audio_format = pyaudio.paInt16
         chunk_size = 512
@@ -52,11 +52,11 @@ class SpeakerOutput:
             your machines default device
         """
         p = pyaudio.PyAudio()
-        rospy.loginfo("Attempting to find device named 'QTSpeaker'")
+        rospy.loginfo("Pi Attempting to find device named 'QTSpeaker'")
         for i in range(p.get_device_count()):
             device = p.get_device_info_by_index(i)
 	    print(device['name'])
-            if device['name'] == 'play':
+            if device['name'] == 'sysdefault':
                 self.output_device_index = i
                 return
 
